@@ -9,5 +9,5 @@ output = r.json()
 
 os.makedirs("data", exist_ok=True)
 
-with open("data/meeting_list_202302_ver2.json", "w") as f:
-    json.dump(output, f)
+with open("data/meeting_list_202302.json", "w", encoding="utf-8") as f:
+    json.dump(output, f, ensure_ascii=False)
