@@ -1,7 +1,8 @@
-drop table if exists `poliquant.source.m_counsilors`
+DROP TABLE IF EXISTS `poliquant.source.m_counsilors`
 ;
-create table `poliquant.source.m_counsilors` (
-    profileURL STRING OPTIONS(description="Profile website"),
+CREATE TABLE `poliquant.source.m_counsilors` 
+(
+    profile_url STRING OPTIONS(description="Profile website"),
     name STRING OPTIONS(description="Kanji name"),
     furigana STRING OPTIONS(description="furigana name"),
     party STRING OPTIONS(description="Political party"),

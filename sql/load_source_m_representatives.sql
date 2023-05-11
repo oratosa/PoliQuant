@@ -1,6 +1,17 @@
-LOAD DATA OVERWRITE `poliquant.source.m_representatives`
+TRUNCATE TABLE `poliquant.source.m_representatives`
+;
+
+LOAD DATA INTO `poliquant.source.m_representatives`
+(
+    profile_url STRING OPTIONS(description="Profile website"),
+    name STRING OPTIONS(description="Kanji name"),
+    furigana STRING OPTIONS(description="furigana name"),
+    party STRING OPTIONS(description="Political party"),
+    district STRING OPTIONS(description="Electoral district"),
+    elected_times STRING OPTIONS(description="Elected times")
+)
 FROM FILES (
   format = 'CSV',
-  uris = ['gs://poliquant/data/politician_list/representatives_master.csv'])
-  ;
-
+  uris = ['gs://poliquant/data/politician_list/representatives_master.csv']
+)
+;
