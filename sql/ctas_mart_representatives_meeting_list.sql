@@ -12,6 +12,7 @@ select
   ,m.speech_id
   ,m.speech_order
   ,m.speaker
+  ,case when r.name is not null then 1 else 0 as politician_flg
   ,r.profile_url
   ,r.party
   ,r.district
@@ -26,7 +27,7 @@ from
     ,name_of_house
     ,name_of_meeting
     ,issue
-    ,`date`
+    ,date
     ,speech_id
     ,speech_order
     ,speaker
