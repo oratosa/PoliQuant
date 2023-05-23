@@ -1,6 +1,23 @@
 import unicodedata, re, urllib, csv
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime, date
+
+
+def reiwa_to_ad(reiwa_date: str) -> date:
+    """
+    reiwa_date takes a format like "令和5年4月25日現在".
+    """
+    reiwa_start_date = datetime(2019, 5, 1)
+
+    reiwa_year = int(reiwa_date[2 : reiwa_date.index("年")])
+    year = reiwa_year + int(reiwa_start_date.year) - 1
+    month = int(reiwa_date[reiwa_date.index("年") + 1 : reiwa_date.index("月")])
+    day = int(reiwa_date[reiwa_date.index("月") + 1 : reiwa_date.index("日")])
+
+    ad_date = datetime(year, month, day).date()
+
+    return ad_date
 
 
 class Representatives:
@@ -78,15 +95,21 @@ class Representatives:
 
 
 class Councilors:
-    def __init__(self):
-        self.members = list()
+    def __init__(self, session):
+        self.session: int = session
+        self.source_url: str = (
+            f"https://www.sangiin.go.jp/japanese/joho1/kousei/giin/{session}/giin.htm"
+        )
+        self.members: list = list()
+        self.update_date: date = None
 
-    def add_members(self, url: str) -> None:
-        # retrieve a html
-        page = url
-        response = requests.get(page)
-        html = response.content
+    def add_update_date(self, html: str) -> None:
+        # parse the html
+        soup = BeautifulSoup(html, "html.parser")
+        update_date_txt = soup.find("p", _class="ta_r").get_text().strip()
+        self.update_date = reiwa_to_ad(update_date_txt)
 
+    def add_members(self, html: str) -> None:
         # parse the html
         soup = BeautifulSoup(html, "html.parser")
         table = soup.find("table", summary="議員一覧（50音順）")
@@ -105,7 +128,7 @@ class Councilors:
                     # Website for profile
                     profile = a["href"]
                     abs_url = urllib.parse.urljoin(
-                        page,
+                        self.source_url,
                         profile,
                     )
 
@@ -143,13 +166,14 @@ class Councilors:
                             party,
                             district,
                             expiration,
+                            self.session,
                         ]
                     )
 
         self.members.extend(member_list)
 
 
-def main():
+def write_representatives():
     # Representatives
     representatives = Representatives()
 
@@ -204,17 +228,23 @@ def main():
         writer = csv.writer(f)
         writer.writerows(representatives.members)
 
-    # Councilors
-    councilors = Councilors()
 
-    page = "https://www.sangiin.go.jp/japanese/joho1/kousei/giin/200/giin.htm"
+def write_councilors(session):
+    councilors = Councilors(session)
 
-    councilors.add_members(page)
+    html = retrieve_html(councilors.source_url)
+    councilors.add_update_date(html)
 
-    with open("data/counsilors_master.csv", "w") as f:
+    councilors.add_members(html)
+
+    with open(
+        "data/counsilors_master_{}.csv".format(str(councilors.update_date)), "w"
+    ) as f:
         writer = csv.writer(f)
         writer.writerows(councilors.members)
 
 
 if __name__ == "__main__":
-    main()
+    sessions = range(207, 212)
+    for session in sessions:
+        write_councilors(session)
