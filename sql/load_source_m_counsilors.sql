@@ -8,10 +8,11 @@ LOAD DATA INTO `poliquant.source.m_counsilors`
     furigana STRING OPTIONS(description="furigana name"),
     party STRING OPTIONS(description="Political party"),
     district STRING OPTIONS(description="Electoral district"),
-    expiration_date STRING OPTIONS(description="Expiration date")
+    expiration_date STRING OPTIONS(description="Expiration date"),
+    session STRING OPTIONS(description="Session")
 )
 FROM FILES (
   format = 'CSV',
-  uris = ['gs://poliquant/data/politician_list/counsilors_master.csv']
+  uris = ['gs://poliquant/data/politician_list/counsilors/counsilors_master_*.csv']
   )
 ;

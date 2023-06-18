@@ -7,6 +7,7 @@ CREATE TABLE `poliquant.source.m_representatives`
     furigana STRING OPTIONS(description="furigana name"),
     party STRING OPTIONS(description="Political party"),
     district STRING OPTIONS(description="Electoral district"),
-    elected_times STRING OPTIONS(description="Elected times")
+    elected_times STRING OPTIONS(description="Elected times"),
+    as_of_date STRING OPTIONS(description="As of date")
 )
 ;
