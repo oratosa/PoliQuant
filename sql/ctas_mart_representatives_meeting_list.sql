@@ -1,7 +1,7 @@
-drop table if exists `poliquant.mart.representatives_meeting_list`
+drop table if exists `poliquant.mart.meeting_list`
 ;
 
-create table `poliquant.mart.representatives_meeting_list` as
+create table `poliquant.mart.meeting_list` as
 select 
   m.issue_id
   ,m.session
@@ -12,11 +12,19 @@ select
   ,m.speech_id
   ,m.speech_order
   ,m.speaker
-  ,case when r.name is not null then 1 else 0 as politician_flg
-  ,r.profile_url
-  ,r.party
-  ,r.district
-  ,r.elected_times
+  ,case when r.name is not null then 1
+        when c.name is not null then 2
+        else 3 end
+        as politician_type
+  ,case when r.name is not null then "representative"
+        when c.name is not null then "counsilor"
+        else "unknown" end
+        as politician_type_name
+  ,coalesce(r.profile_url, c.profile_url) as profile_url 
+  ,coalesce(r.party, c.party) as party
+  ,coalesce(r.district, c.district) as district
+  ,r.elected_times as representative_elected_times
+  ,c.expiration_date as counsilor_expiration_date
   ,m.speech_url
   ,m.meeting_url
   ,m.pdf_url
@@ -35,9 +43,11 @@ from
     ,meeting_url
     ,pdf_url
   from `poliquant.dwh.meeting_list`
-  where name_of_house = "衆議院" 
-    and speaker != "会議録情報"
+  where speaker != "会議録情報"
   ) as m
 left join `poliquant.source.m_representatives` as r
   on  m.speaker = r.name
+left join `poliquant.source.m_counsilors` as c
+  on  m.speaker = c.name
+  and m.session = cast(c.session as INTEGER)
 ;
