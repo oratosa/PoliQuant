@@ -1,7 +1,7 @@
-TRUNCATE TABLE `poliquant.source.m_counsilors`
+TRUNCATE TABLE `poliquant.source.m_councilors`
 ;
 
-LOAD DATA INTO `poliquant.source.m_counsilors`
+LOAD DATA INTO `poliquant.source.m_councilors`
 (
     profile_url STRING OPTIONS(description="Profile website"),
     name STRING OPTIONS(description="Kanji name"),

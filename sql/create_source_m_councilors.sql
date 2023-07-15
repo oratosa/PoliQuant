@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `poliquant.source.m_counsilors`
+DROP TABLE IF EXISTS `poliquant.source.m_councilors`
 ;
-CREATE TABLE `poliquant.source.m_counsilors` 
+CREATE TABLE `poliquant.source.m_councilors` 
 (
     profile_url STRING OPTIONS(description="Profile website"),
     name STRING OPTIONS(description="Kanji name"),

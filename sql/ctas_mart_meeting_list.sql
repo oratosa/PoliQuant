@@ -47,7 +47,7 @@ from
   ) as m
 left join `poliquant.source.m_representatives` as r
   on  m.speaker = r.name
-left join `poliquant.source.m_counsilors` as c
+left join `poliquant.source.m_councilors` as c
   on  m.speaker = c.name
   and m.session = cast(c.session as INTEGER)
 ;
