@@ -1,4 +1,4 @@
-truncate poliquant.source.m_councilors_district
+truncate table poliquant.source.m_councilors_district
 ;
 
 insert into poliquant.source.m_councilors_district (
