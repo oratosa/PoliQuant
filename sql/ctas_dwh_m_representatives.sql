@@ -22,6 +22,10 @@ from
       regexp_replace(district, r'(\(\D\))|\d','') as district,
       case 
         when regexp_contains(district, r'\(\D\)') then "比例"
+        when regexp_contains(district, r'\d') then "小選挙区"  
+        end as type,
+      case 
+        when regexp_contains(district, r'\(\D\)') then "比例"
         when regexp_contains(district, r'\d') then regexp_replace(district, r'\D','')  
         end as district_detail,
       elected_times,
@@ -29,5 +33,6 @@ from
     from `poliquant.source.m_representatives`
   ) r
 left join `poliquant.source.m_representatives_district` as d
-on r.district = d.district
+    on r.district = d.district
+    and r.type = d.type 
 ;
