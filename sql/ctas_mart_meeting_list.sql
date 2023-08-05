@@ -51,5 +51,5 @@ left join `poliquant.dwh.m_representatives` as r
   on  m.speaker = r.name
 left join `poliquant.dwh.m_councilors` as c
   on  m.speaker = c.name
-  and m.session = cast(c.session as INTEGER)
+  and m.session = cast(c.session as INT64)
 ;
