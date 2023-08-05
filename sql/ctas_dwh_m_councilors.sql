@@ -9,9 +9,9 @@ select
   m.party,
   d.id as district_id,
   m.district,
-  case when d.type = "小選挙区" then null 
-  else d.type 
-  end as district_detail,
+  case when d.type = "小選挙区" then "1" --参議院選挙区は各都道府県ごとに1つのため、すべて1とする
+    else d.type 
+    end as district_detail,
   m.expiration_date,
   m.session
 from `poliquant.source.m_councilors` as m
