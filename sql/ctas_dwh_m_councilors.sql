@@ -13,7 +13,7 @@ select
     else d.type 
     end as district_detail,
   m.expiration_date,
-  m.session
+  cast(m.session as INT64) as session
 from `poliquant.source.m_councilors` as m
 left join `poliquant.source.m_councilors_district` as d
 on m.district = d.district
