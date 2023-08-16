@@ -30,8 +30,8 @@ select
   ,m.speech_url
   ,m.meeting_url
   ,m.pdf_url
-from 
-  (select 
+from (
+  select 
     issue_id
     ,session
     ,name_of_house
