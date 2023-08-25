@@ -84,6 +84,6 @@ if __name__ == "__main__":
         councilors.add_update_date()
         councilors.add_members()
 
-        with open(f"data/counsilors_master_{councilors.update_date}.csv", "w") as f:
+        with open(f"data/councilors_master_{councilors.update_date}.csv", "w") as f:
             writer = csv.writer(f)
             writer.writerows(councilors.members)

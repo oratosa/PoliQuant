@@ -13,6 +13,6 @@ LOAD DATA INTO `poliquant.source.m_representatives`
 )
 FROM FILES (
   format = 'CSV',
-  uris = ['gs://poliquant/data/politician_list/representatives/representatives_master_*.csv']
+  uris = ['gs://poliquant/data/input/politician_list/representative/representatives_master_*.csv']
 )
 ;

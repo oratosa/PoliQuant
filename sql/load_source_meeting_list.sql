@@ -35,6 +35,6 @@ LOAD DATA INTO `poliquant.source.meeting_list`
 )
 FROM FILES (
   format = 'JSON',
-  uris = ['gs://poliquant/data/meeting_list/*.json']
+  uris = ['gs://poliquant/data/input/meeting_list/*.json']
 )
 ;
