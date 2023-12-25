@@ -2,8 +2,8 @@
 data/
 .DS_Store
 .vscode/
-config/
-logs/
+airflow/config/
+airflow/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
