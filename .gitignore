@@ -2,10 +2,11 @@
 data/
 .DS_Store
 .vscode/
-airflow/config/
 airflow/logs/
 airflow/airflow-webserver.pid
 airflow/airflow-worker.pid
+airflow/airflow.cfg
+airflow/webserver_config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
