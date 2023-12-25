@@ -4,6 +4,8 @@ data/
 .vscode/
 airflow/config/
 airflow/logs/
+airflow/airflow-webserver.pid
+airflow/airflow-worker.pid
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
