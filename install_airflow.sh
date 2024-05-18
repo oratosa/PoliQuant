@@ -1,5 +1,6 @@
 #!/bin/bash
 export AIRFLOW_HOME=${PWD}/airflow
+echo "export AIRFLOW_HOME=$AIRFLOW_HOME" >> ~/.bashrc
 echo "Airflow home is set to: $AIRFLOW_HOME"
 
 AIRFLOW_VERSION=2.9.1

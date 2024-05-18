@@ -12,7 +12,10 @@
 		"ghcr.io/hspaans/devcontainer-features/pytest:1": {}
 	},
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "./install_airflow.sh",
+	"postCreateCommand": [
+		"./install_airflow.sh",
+		"source ~/.bashrc"
+	],
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
