@@ -26,10 +26,11 @@ default_args = {
 }
 
 with DAG(
+    dag_id="test",
     default_args=default_args,
     description="A simple test DAG",
     schedule_interval=timedelta(days=1),
-    start_date=datetime(2021, 1, 1),
+    start_date=datetime(2024, 5, 30),
     tags=["example"],
 ) as dag:
 
