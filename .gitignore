@@ -3,10 +3,9 @@ data/
 .DS_Store
 .vscode/
 airflow/logs/
-airflow/airflow-webserver.pid
-airflow/airflow-worker.pid
-airflow/airflow.cfg
-airflow/webserver_config.py
+airflow/airflow-scheduler.*
+airflow/airflow-webserver.*
+airflow/airflow-webserver-monitor.*
 google-cloud-sdk/
 
 # Byte-compiled / optimized / DLL files
