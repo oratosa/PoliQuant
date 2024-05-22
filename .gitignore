@@ -6,6 +6,7 @@ airflow/logs/
 airflow/airflow-scheduler.*
 airflow/airflow-webserver.*
 airflow/airflow-webserver-monitor.*
+airflow/airflow.db
 google-cloud-sdk/
 
 # Byte-compiled / optimized / DLL files
