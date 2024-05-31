@@ -83,11 +83,11 @@ def main():
                 result = r.json()
 
                 # Create a directory for the data if it doesn't exist
-                os.makedirs("data", exist_ok=True)
+                os.makedirs("/workspaces/PoliQuant/data", exist_ok=True)
 
                 # Dump the data to a JSON file
                 with open(
-                    f"data/meeting_list_{first_date}_{startrecord}.json",
+                    f"/workspaces/PoliQuant/data/meeting_list_{first_date}_{startrecord}.json",
                     "w",
                     encoding="utf-8",
                 ) as f:
