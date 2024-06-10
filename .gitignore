@@ -2,8 +2,13 @@
 data/
 .DS_Store
 .vscode/
-airflow/config/
 airflow/logs/
+airflow/airflow-scheduler.*
+airflow/airflow-webserver.*
+airflow/airflow-webserver-monitor.*
+airflow/airflow.db
+airflow/airflow.db-journal
+google-cloud-sdk/
 poliquant-aacdcff23bb6.json
 
 # Byte-compiled / optimized / DLL files
