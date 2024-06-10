@@ -4,6 +4,7 @@ data/
 .vscode/
 airflow/config/
 airflow/logs/
+poliquant-aacdcff23bb6.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
