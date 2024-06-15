@@ -2,8 +2,6 @@ from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-from src.get_meeting_list import main
-
 default_args = {
     "start_date": datetime(2024, 1, 1),
     "retries": 0,
