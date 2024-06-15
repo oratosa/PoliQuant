@@ -50,7 +50,7 @@ class NdlApi:
                 os.makedirs(output_dir, exist_ok=True)
 
                 # Create a file path
-                file_name = f"meeting_list_{month_start}_{startrecord}.json"
+                file_name = f"meeting_list_{month_start.date()}_{startrecord}.json"
                 path = f"{output_dir}/{file_name}"
 
                 # Dump the data to a JSON file
