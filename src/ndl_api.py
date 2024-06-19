@@ -13,6 +13,10 @@ class NdlApi:
         """
         Retrieves meeting data from the API and saves it as JSON files.
 
+        start_date: "2024-04-10"
+        end_date: "2024-06-14"
+        output_dir: "workplace/poliquant/data/meeting_list"
+
         This function iterates over the specified years and months, retrieves meeting data
         from the API for each month, and saves the data as JSON files.
         """
