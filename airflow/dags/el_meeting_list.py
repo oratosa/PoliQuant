@@ -3,6 +3,7 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 
 from src.gcs_connection import GCSConnection
+from src.ndl_api import NdlApi
 
 default_args = {
     "start_date": datetime(2024, 1, 1),
@@ -15,9 +16,6 @@ with DAG(
     schedule_interval="0 0 3 * *",
     catchup=False,
 ) as dag:
-
-    def extract_meeting_list():
-        print("Extracted the data of the meeting list using API.")
 
     def load_meeting_files_to_source_table():
         print("Loaded the files of the meeting list into a source table in BigQuery.")
@@ -32,8 +30,16 @@ with DAG(
             "Transformed the rows in the dwh table of meeting_list and inserted them into the table in the mart layer."
         )
 
+    # Instantiate the class to pass a method to PythonOperator.
+    ndl_api = NdlApi()
     t_extract_meeting_list = PythonOperator(
-        task_id="extract_meeting_list_task", python_callable=extract_meeting_list
+        task_id="extract_meeting_list_task",
+        python_callable=ndl_api.get_meeting_list,
+        op_kwargs={
+            "start_date": "2022-01-01",
+            "end_date": str(datetime.date(datetime.today())),
+            "output_dir": "/workspaces/PoliQuant/data/meeting_list",
+        },
     )
 
     # Instantiate the class to pass a method to PythonOperator.
