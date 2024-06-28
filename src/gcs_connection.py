@@ -1,5 +1,4 @@
 import os
-import json
 from google.cloud import storage
 from google.oauth2 import service_account
 
@@ -10,9 +9,9 @@ class GCSConnection:
 
     def setup_gcs_client(self):
         """Set up the Google Cloud Storage client"""
-        service_account_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
-        credentials = service_account.Credentials.from_service_account_info(
-            service_account_info
+        service_account_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+        credentials = service_account.Credentials.from_service_account_file(
+            service_account_file_path
         )
         client = storage.Client(credentials=credentials)
         return client
