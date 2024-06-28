@@ -9,6 +9,7 @@ airflow/airflow-webserver-monitor.*
 airflow/airflow.db
 airflow/airflow.db-journal
 google-cloud-sdk/
+secrets/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
