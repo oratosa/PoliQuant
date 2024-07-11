@@ -1,11 +1,17 @@
-import re, urllib, csv
+import re
+import urllib
+import csv
 import requests
+import os
 from lxml import html
 
 import normalization
 
 
-class CouncilorsNameList:
+TARGET_DIR = "/workspaces/PoliQuant/data/politician_list/councilors"
+
+
+class ParserCouncilors:
     def __init__(self, session):
         self.session: int = session
         self.source_url: str = (
@@ -13,6 +19,7 @@ class CouncilorsNameList:
         )
         self.members: list = list()
         self.update_date: str = None
+        self.target_dir = TARGET_DIR
 
     def add_update_date(self) -> None:
         response = requests.get(self.source_url)
@@ -76,14 +83,20 @@ class CouncilorsNameList:
 
         self.members.extend(member_list)
 
+    def write_csv(self):
+        os.makedirs(self.target_dir, exist_ok=True)
+        with open(
+            f"{self.target_dir}/councilors_{self.update_date}_{self.session}.csv",
+            "w",
+        ) as f:
+            writer = csv.writer(f)
+            writer.writerows(self.members)
+
 
 if __name__ == "__main__":
-    sessions = range(207, 212)
+    sessions = range(207, 214)  # session情報をどこかから取得してくる必要ある。
     for session in sessions:
-        councilors = CouncilorsNameList(session)
+        councilors = ParserCouncilors(session)
         councilors.add_update_date()
         councilors.add_members()
-
-        with open(f"data/councilors_master_{councilors.update_date}.csv", "w") as f:
-            writer = csv.writer(f)
-            writer.writerows(councilors.members)
+        councilors.write_csv()

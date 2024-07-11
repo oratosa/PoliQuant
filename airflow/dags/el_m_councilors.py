@@ -1,6 +1,15 @@
 from airflow.models.dag import DAG
+from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.transfers.local_to_gcs import (
+    LocalFilesystemToGCSOperator,
+)
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+
 from datetime import datetime
+
+from parse_councilors import ParserCouncilors
+from read_sql_file import read_sql_file
 
 default_args = {
     "start_date": datetime(2024, 1, 1),
@@ -8,60 +17,83 @@ default_args = {
 }
 
 with DAG(
-    "extract_n_load_m_councilors_to_BigQuery",
+    "make__dwh_m_councilors_in_BigQuery",
     default_args=default_args,
     schedule_interval="0 0 3 * *",
     catchup=False,
 ) as dag:
 
-    def generate_m_councilors():
-        print("Generated a councilors list.")
-
-    def put_m_councilors():
-        print("Put the files of the generated councilors list on a GCS bucket.")
-
-    def load_councilors_files_to_source_table():
-        print(
-            "Loaded the files of the councilors list into a source table in BigQuery."
-        )
-
-    def transform_the_source_table_of_councilors():
-        print(
-            "Transformed the rows in the source table of councilors and inserted them into the table in the dwh layer."
-        )
-
-    def transform_the_dwh_table_of_councilors():
-        print(
-            "Transformed the rows in the dwh table of councilors and inserted them into the table in the mart layer."
-        )
-
-    t_generate_m_councilors = PythonOperator(
-        task_id="generate_councilors_list_task", python_callable=generate_m_councilors
+    start = EmptyOperator(
+        task_id="start",
     )
 
-    t_put_m_councilors = PythonOperator(
-        task_id="put_counsilors_list_task", python_callable=put_m_councilors
+    def parse_councilors_list(start=207, end=214):
+        sessions = range(
+            start, end
+        )  # 今後の課題: session情報をどこかから取得してくる必要ある。
+        for session in sessions:
+            councilors = ParserCouncilors(session)
+            councilors.add_update_date()
+            councilors.add_members()
+            councilors.write_csv()
+
+    t_parse_councilors_list = PythonOperator(
+        task_id="t_parse_councilors_list",
+        python_callable=parse_councilors_list,
     )
 
-    t_load_councilors_lists = PythonOperator(
-        task_id="load_coundilors_list_task",
-        python_callable=load_councilors_files_to_source_table,
+    import glob
+
+    SRC_DIR = "/workspaces/PoliQuant/data/politician_list/councilors"
+    file_name = "councilors_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv"
+    path_list = glob.glob(f"{SRC_DIR}/{file_name}")
+
+    t_put_councilors_list = LocalFilesystemToGCSOperator(
+        task_id="t_put_councilors_list",
+        src=path_list,
+        dst="data/input/politician_list/councilors/",
+        bucket="poliquant",
     )
 
-    t_transform_source_councilors = PythonOperator(
-        task_id="transform_source_councilors_list_task",
-        python_callable=transform_the_source_table_of_councilors,
+    sql_load_source_m_councilors = read_sql_file(
+        "/workspaces/PoliQuant/sql/load_source_m_councilors.sql"
+    )
+    t_load_source_m_councilors = BigQueryInsertJobOperator(
+        task_id="t_load_source_m_councilors",
+        configuration={
+            "query": {
+                "query": sql_load_source_m_councilors,
+                "useLegacySql": False,
+            }
+        },
+        gcp_conn_id="google_cloud_default",
+        location="US",
     )
 
-    t_transform_dwh_councilors = PythonOperator(
-        task_id="transform_dwh_councilors",
-        python_callable=transform_the_dwh_table_of_councilors,
+    sql_ctas_dwh_m_councilors = read_sql_file(
+        "/workspaces/PoliQuant/sql/ctas_dwh_m_councilors.sql"
+    )
+    t_ctas_dwh_m_councilors = BigQueryInsertJobOperator(
+        task_id="t_ctas_dwh_m_councilors",
+        configuration={
+            "query": {
+                "query": sql_ctas_dwh_m_councilors,
+                "useLegacySql": False,
+            }
+        },
+        gcp_conn_id="google_cloud_default",
+        location="US",
+    )
+
+    end = EmptyOperator(
+        task_id="end",
     )
 
     (
-        t_generate_m_councilors
-        >> t_put_m_councilors
-        >> t_load_councilors_lists
-        >> t_transform_source_councilors
-        >> t_transform_dwh_councilors
+        start
+        >> t_parse_councilors_list
+        >> t_put_councilors_list
+        >> t_load_source_m_councilors
+        >> t_ctas_dwh_m_councilors
+        >> end
     )

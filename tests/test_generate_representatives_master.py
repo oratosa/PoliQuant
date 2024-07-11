@@ -1,23 +1,23 @@
-from src.generate_representatives_master import RepresentativesNameList
+from src.parse_representatives import ParserRepresentatives
 
 
-class TestRepresentativesNameList:
+class TestParserRepresentatives:
     def test_init(self):
-        representatives = RepresentativesNameList(1)
+        representatives = ParserRepresentatives(1)
         assert (
             representatives.source_url
             == "https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/1giin.htm"
         )
         assert representatives.members == []
-        assert representatives.update_date == None
+        assert representatives.update_date is None
 
     def test_add_update_date(self):
-        representatives = RepresentativesNameList(1)
+        representatives = ParserRepresentatives(1)
         representatives.add_update_date()
         assert representatives.update_date == "2023-05-20"
 
     def test_add_members(self):
-        representatives = RepresentativesNameList(1)
+        representatives = ParserRepresentatives(1)
         representatives.add_update_date()
         representatives.add_members()
         assert representatives.members[0] == [

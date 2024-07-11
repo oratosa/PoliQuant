@@ -1,16 +1,22 @@
-import re, urllib, csv
+import re
+import urllib
+import csv
 import requests
+import os
 from lxml import html
 
 import normalization
 
+TARGET_DIR = "/workspaces/PoliQuant/data/politician_list/representatives"
 
-class RepresentativesNameList:
-    def __init__(self, number):
-        self.alphabetical_order = number
-        self.source_url: str = f"https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/{number}giin.htm"
-        self.members: list = list()
+
+class ParserRepresentatives:
+    def __init__(self, page_number):
+        self.page_number = page_number
+        self.source_url = f"https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/{page_number}giin.htm"
+        self.members = list()
         self.update_date: str = None
+        self.target_dir = TARGET_DIR
 
     def add_update_date(self) -> None:
         response = requests.get(self.source_url)
@@ -73,17 +79,20 @@ class RepresentativesNameList:
 
         self.members.extend(member_list)
 
+    def write_csv(self):
+        os.makedirs(self.target_dir, exist_ok=True)
+        with open(
+            f"{self.target_dir}/representatives_{self.update_date}_{self.page_number}.csv",
+            "w",
+        ) as f:
+            writer = csv.writer(f)
+            writer.writerows(self.members)
+
 
 if __name__ == "__main__":
     page_numbers = range(1, 11)
     for number in page_numbers:
-        representatives = RepresentativesNameList(number)
+        representatives = ParserRepresentatives(number)
         representatives.add_update_date()
         representatives.add_members()
-
-        with open(
-            f"data/representatives_master_{representatives.update_date}_{number}.csv",
-            "w",
-        ) as f:
-            writer = csv.writer(f)
-            writer.writerows(representatives.members)
+        representatives.write_csv()
