@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set PYTHONPATH
-export PYTHONPATH=/workspaces/PoliQuant
+export PYTHONPATH=/workspaces/PoliQuant/src
 
 # Set the key file path of GCP authentification
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/secrets/gcp-service-account-key.json"
