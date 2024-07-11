@@ -1,12 +1,13 @@
 from airflow.models.dag import DAG
+from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 from datetime import datetime
 
-from src.gcs_connection import GCSConnection
-from src.ndl_api import NdlApi
-from src.read_sql_file import read_sql_file
+from gcs_connection import GCSConnection
+from ndl_api import NdlApi
+from read_sql_file import read_sql_file
 
 default_args = {
     "start_date": datetime(2024, 1, 1),
@@ -19,6 +20,10 @@ with DAG(
     schedule_interval="0 0 3 * *",
     catchup=False,
 ) as dag:
+
+    start = EmptyOperator(
+        task_id="start",
+    )
 
     # Instantiate the class to pass a method to PythonOperator.
     ndl_api = NdlApi()
@@ -90,9 +95,15 @@ with DAG(
     #     location="US",
     # )
 
+    end = EmptyOperator(
+        task_id="end",
+    )
+
     (
-        t_extract_meeting_list
+        start
+        >> t_extract_meeting_list
         >> t_put_meeting_list
         >> t_load_source_meeting_lists
         >> t_insert_dwh_meeting_list
+        >> end
     )
