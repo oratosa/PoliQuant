@@ -9,6 +9,7 @@ select
   ,c.party
   ,2 as politician_type
   ,"参議院議員" as politician_type_name
+  ,c.type as electoral_system
   ,c.district_id
   ,c.district
   ,c.district_detail

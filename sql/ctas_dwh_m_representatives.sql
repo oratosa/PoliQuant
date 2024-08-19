@@ -7,6 +7,7 @@ select
   r.name,
   r.furigana,
   r.party,
+  d.type,
   d.id as district_id,
   r.district,
   r.district_detail,
@@ -25,7 +26,7 @@ from
         when regexp_contains(district, r'\d') then "小選挙区"  
         end as type,
       case 
-        when regexp_contains(district, r'\(\D\)') then "比例"
+        when regexp_contains(district, r'\(\D\)') then null
         when regexp_contains(district, r'\d') then regexp_replace(district, r'\D','')  
         end as district_detail,
       elected_times,
