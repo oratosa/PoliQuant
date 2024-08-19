@@ -9,6 +9,7 @@ select
   ,main.party
   ,main.politician_type
   ,main.politician_type_name
+  ,main.electoral_system
   ,main.district_id
   ,main.district
   ,main.district_detail
@@ -25,6 +26,7 @@ from
       ,r.party
       ,1 as politician_type
       ,"衆議院議員" as politician_type_name
+      ,r.type as electoral_system
       ,r.district_id
       ,r.district
       ,r.district_detail
