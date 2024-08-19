@@ -7,6 +7,7 @@ select
   r.name,
   r.furigana,
   r.party,
+  d.type,
   d.id as district_id,
   r.district,
   r.district_detail,
