@@ -10,8 +10,9 @@ client = bigquery.Client()
 # クエリを記述
 query = """
 SELECT 
-  district
-  ,district_detail
+  electoral_system
+  ,district
+  ,cast(district_detail as integer) as district_detail
   ,name
   ,party
   ,elected_times
@@ -20,11 +21,12 @@ SELECT
 FROM `poliquant.mart.m_representatives_aggregated` 
 where name_of_house = "衆議院" or name_of_house is null
 group by
-  name
-  ,party
+  electoral_system
   ,district_id
   ,district
   ,district_detail
+  ,name
+  ,party
   ,elected_times
   ,profile_url
 order by district_id, district_detail, party, name
@@ -35,26 +37,41 @@ order by district_id, district_detail, party, name
 query_job = client.query(query)
 df = query_job.to_dataframe()
 
-selected_values = st.selectbox(
+selected_electoral_system = st.multiselect(
+    label="選挙方法",
+    options=df["electoral_system"].unique(),
+    default=df["electoral_system"].unique(),
+    placeholder="選挙方法を選んでください",
+    label_visibility="hidden",
+)
+
+selected_district = st.selectbox(
     label="選挙区",
     options=df["district"].unique(),
-    index=0,
+    index=None,
     placeholder="選挙区を選んでください",
     label_visibility="hidden",
 )
 
-filtered_df = df[df["district"] == selected_values]
+if selected_district is None:
+    filtered_df = df[df["electoral_system"].isin(selected_electoral_system)]
+else:
+    filtered_df = df[
+        (df["district"] == selected_district)
+        & (df["electoral_system"].isin(selected_electoral_system))
+    ]
 
 st.dataframe(
     filtered_df,
     column_config={
+        "electoral_system": "選挙方法",
         "district": "選挙区",
         "district_detail": st.column_config.NumberColumn("選挙区詳細"),
         "name": "議員名",
         "party": "政党",
         "elected_times": st.column_config.NumberColumn("当選回数"),
         "num_of_attendance": st.column_config.LineChartColumn(
-            "発言を行った会議出席回数（会期別）", y_min=0, y_max=30
+            "発言を伴う会議出席回数（会期別）", y_min=0, y_max=30
         ),
         "profile_url": st.column_config.LinkColumn("プロファイル"),
     },
