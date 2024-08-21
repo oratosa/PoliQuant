@@ -9,7 +9,7 @@ client = bigquery.Client()
 
 # クエリを記述
 query = """
-SELECT 
+SELECT
   electoral_system
   ,district
   ,cast(district_detail as integer) as district_detail
@@ -18,7 +18,7 @@ SELECT
   ,elected_times
   ,array_agg(num_of_attendance order by session) as num_of_attendance
   ,profile_url
-FROM `poliquant.mart.m_representatives_aggregated` 
+FROM `poliquant.mart.m_representatives_aggregated`
 where name_of_house = "衆議院" or name_of_house is null
 group by
   electoral_system
