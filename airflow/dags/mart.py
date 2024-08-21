@@ -89,11 +89,27 @@ with DAG(
             location="US",
         )
 
+        sql_ctas_dwh_m_sessions = read_sql_file(
+            "/workspaces/PoliQuant/sql/ctas_dwh_m_sessions.sql"
+        )
+        t_ctas_dwh_m_sessions = BigQueryInsertJobOperator(
+            task_id="t_ctas_dwh_m_sessions",
+            configuration={
+                "query": {
+                    "query": sql_ctas_dwh_m_sessions,
+                    "useLegacySql": False,
+                }
+            },
+            gcp_conn_id="google_cloud_default",
+            location="US",
+        )
+
         (
             t_extract_meeting_list
             >> t_put_meeting_list
             >> t_load_source_meeting_lists
             >> t_insert_dwh_meeting_list
+            >> t_ctas_dwh_m_sessions
         )
 
     with TaskGroup(group_id="g_councilors") as g_councilors:
